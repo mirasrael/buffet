@@ -8,6 +8,10 @@ module Buffet
       @project = project
     end
 
+    def available?
+      system "ssh #{user_at_host} -o ConnectTimeout=1 -q exit"
+    end
+
     def rsync src, dest
       Buffet.run! 'rsync', '-aqz', '--delete',
                   '--delete-excluded', rsync_exclude_flags,

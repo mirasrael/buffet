@@ -7,12 +7,18 @@ module Buffet
       @project = Settings.project
     end
 
+    def collect_slaves
+      @slaves = Settings.slaves.select(&:available?)
+      ignored_slaves = Settings.slaves - @slaves
+      puts "Ignored slaves: #{ignored_slaves.map(&:user_at_host).join(', ')}"
+      raise 'No available slaves defined in settings.yml' if @slaves.empty?
+    end
+
     def run specs = nil
       @specs = specs
       raise 'No specs found' if @specs.empty?
 
-      @slaves = Settings.slaves
-      raise 'No slaves defined in settings.yml' if @slaves.empty?
+      collect_slaves
 
       Buffet.logger.info "Starting Buffet test run"
       puts "Running Buffet..."
@@ -80,10 +86,10 @@ module Buffet
         results << ''
         results << @master.failures.map do |failure|
           "#{failure[:description]}\n".red +
-          "Slave: #{failure[:slave_name]}\n" +
-          "Location: #{failure[:location]}\n" +
-          "#{failure[:message]}\n" +
-          "#{failure[:backtrace]}\n"
+            "Slave: #{failure[:slave_name]}\n" +
+            "Location: #{failure[:location]}\n" +
+            "#{failure[:message]}\n" +
+            "#{failure[:backtrace]}\n"
         end
       end
 
