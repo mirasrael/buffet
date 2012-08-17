@@ -55,6 +55,6 @@ module Buffet
   end
 
   def self.user
-    @user ||= `whoami`.chomp
+    @user ||= Buffet::Settings.user
   end
 end

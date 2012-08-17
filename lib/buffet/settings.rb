@@ -56,6 +56,10 @@ module Buffet
         self['framework'].upcase || 'RSPEC1'
       end
 
+      def user
+        self['user'] || `whoami`.chomp
+      end
+
       def prepare_script
         self['prepare_script'] || DEFAULT_PREPARE_SCRIPT
       end
